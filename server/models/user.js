@@ -37,14 +37,20 @@ function User(user){
     throw new jsonschema.SchemaError(e)
   }
 
-  user.salt = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)
-  user.password = hasher(user.password, user.salt)
+  this.username = user.username
+  this.salt = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)
+  this.password = hasher(user.password, this.salt)
 
-  return user
+  return this
 }
 
 User.prototype.save = function(next){
-  redis.hmset('chalk:users:'+this.username, this, next)
+  var self = this
+  redis.hgetall('chalk:users:'+self.username, function(error, user){
+    if(error){ return next(error) }
+    if(user){ return next(new Error('duplicated')) }
+    redis.hmset('chalk:users:'+self.username, self, next)
+  })
 }
 
 User.prototype.delete = function(next){
@@ -52,7 +58,7 @@ User.prototype.delete = function(next){
 }
 
 User.prototype.validatePassword = function(password){
-  return hasher(password, self.salt) === self.password
+  return hasher(password, this.salt) === this.password
 }
 
 User.findByUsername = function(username, next){
