@@ -1,0 +1,21 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/jquery.min.js"></script>
+  <script type="text/javascript">
+    var socket = io();
+    $('form').submit(function(){
+      socket.emit('chat message', $('#m').val());
+      $('#m').val('');
+      return false;
+    });   
+  </script>
+</head>
+<body>
+    <form action="">
+      <h1>Form</h1>
+    </form>
+</body>
+</html>
