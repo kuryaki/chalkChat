@@ -5,7 +5,14 @@
   <script src="/socket.io/socket.io.js"></script>
   <script src="js/jquery.min.js"></script>
   <script type="text/javascript">
-    var socket = io();
+    var socket = io.connect();
+    socket.on('connect', function (socket) {
+      socket
+        .on('authenticated', function () {
+          alert('authenticated')
+        })
+        .emit('authenticate', {token: jwt}); //send the jwt
+    });
     $('form').submit(function(){
       socket.emit('chat message', $('#m').val());
       $('#m').val('');

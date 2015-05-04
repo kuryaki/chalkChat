@@ -1,7 +1,7 @@
 process.env.PORT = 4000
 process.env.NODE_ENV = 'test'
 
-var server = require('../../index')
+var server = require('../../')
   , supertest = require('supertest')
   , request = supertest(server)
   , expect = require('chai').expect
@@ -20,9 +20,11 @@ describe('Auth', function(){
       done()
     })
   })
+
   it('should protect a protected endpoint', function(done){
     request.get('/protected').expect(401).end(done)
   })
+
   it('should not authenticate invalid credentials', function(done){
     request
     .post('/login')
@@ -30,6 +32,7 @@ describe('Auth', function(){
     .expect(401)
     .end(done)
   })
+
   it('should authenticate valid credentials', function(done){
     request
     .post('/login')
@@ -41,6 +44,7 @@ describe('Auth', function(){
       done()
     })
   })
+
   it('should show a protected after authenticate', function(done){
     request
     .post('/login')
@@ -54,6 +58,7 @@ describe('Auth', function(){
       .expect(200).end(done)
     })
   })
+
   after(function(done){
     User.findByUsername('david', function(error, user){
       user.delete(function(error, ok){
@@ -61,5 +66,6 @@ describe('Auth', function(){
       })
     })
   })
+
 })
 
