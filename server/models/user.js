@@ -40,6 +40,7 @@ function User(user){
   this.username = user.username
   this.salt = Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5)
   this.password = hasher(user.password, this.salt)
+  this.avatar = 'http://api.adorable.io/avatars/'+user.username
 
   return this
 }
