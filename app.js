@@ -9,6 +9,7 @@ var express = require('express')
   , http = require('http').Server(app)
   , morgan = require('morgan')
   , authRoutes = require('./routes/auth')
+  , registerRoutes = require('./routes/register')
   , env = require('dotenv')
 
 env.load()
@@ -28,6 +29,7 @@ app.set('port', process.env.PORT || 3000)
 app.use(errorManager)
 
 app.use('/login', authRoutes)
+app.use('/register', registerRoutes)
 
 app.get('/status', function(req, res){
   res.status(200).end()

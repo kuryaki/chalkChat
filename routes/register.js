@@ -4,19 +4,15 @@ var express = require('express')
   , User = require('../models/user')
 
 
-router.get('/', function(req, res){
-  res
-  .status(200)
-  .send('login form')
-})
-
-// Issue the jwt token
 router.post('/', function(req, res, next) {
   User.findByUsername(req.body.username, function(error, user){
     if(error){ return next(error) }
-    if(!user){ return res.status(401).send({error:'Not a registered user please Sign Up'}) }
-    if(user.validatePassword(req.body.password)){
+    if(user){ return res.status(400).send({error:'User already exists, please sign in'}) }
 
+    var user = new User(req.body)
+    user.save(function(error, ok){
+      if(error) { return next(error) }
+      
       delete user.password
       delete user.salt
 
@@ -30,9 +26,8 @@ router.post('/', function(req, res, next) {
         token: token
       })
 
-    } else {
-      return res.status(401).send('invalid')
-    }
+    })
+      
   })
 })
 
