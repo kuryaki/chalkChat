@@ -35,7 +35,6 @@ describe('Socket Server connection', function(){
   it('should connect', function(done){
     var socket = io.connect(socketURL, options)
     socket.on('connect', function(){
-      console.log(arguments)
       done()
     })
 
