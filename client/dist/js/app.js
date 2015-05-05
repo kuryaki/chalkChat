@@ -1,4 +1,11 @@
-var user = { username: 'default' }
+var user = { }
+
+$(document).ready(function() {
+  user = JSON.parse(Cookies.get('chalk_user') || '{"token":""}')
+  if(user.token){
+    socketAuth()
+  }
+})
 
 // Auth Logic
 $( "#signIn" ).click(function(event) {
@@ -23,7 +30,10 @@ $( "#signIn" ).click(function(event) {
 
     user.token = body.token
     user.username = data.username
-    socketAuth(user)
+
+    Cookies.set('chalk_user', JSON.stringify(user))
+
+    socketAuth()
 
   })
 })
@@ -68,9 +78,19 @@ $( "#signUpConfirm" ).click(function(event) {
 
     user.token = body.token
     user.username = data.username
+
+    Cookies.set('chalk_user', JSON.stringify(user))
+
     socketAuth()
 
   })
+})
+
+$( "#signOut" ).click(function(event) {
+  event.preventDefault()
+  $( "#auth" ).show()
+  $( "#chat" ).hide()
+  Cookies.remove('chalk_user')
 })
 
 function socketAuth(){
@@ -82,16 +102,38 @@ function socketAuth(){
     'query': 'token=' + user.token
   })
 
+  socket.on('error', function(error){
+    if(error.code === 'invalid_token'){
+      $( "#auth" ).show()
+    }
+    console.log(error)
+  })
+
   socket.on('connect', function(){
     $( "#chat" ).show()
+
+    // Chat login
+
+    $( "#btn-chat" ).click(function(event) {
+      event.preventDefault()
+      var selfMessage = [
+        '<li class="right clearfix">',
+        ' <span class="chat-img pull-right">',
+        '   <img src="http://api.adorable.io/avatars/50/'+user.username+'" alt="User Avatar" class="img-circle" />',
+        ' </span>',
+        ' <div class="chat-body clearfix">',
+        '   <div class="header">',
+        '     <small class=" text-muted"><i class="fa fa-upload-o fa-fw"></i> </small>',
+        '     <strong class="pull-right primary-font">'+user.username+'</strong>',
+        '   </div>',
+        '   <p>'+$( "#btn-input" ).val()+'</p>',
+        ' </div>',
+        '</li>'
+      ].join("\n");
+      $("#chatHistory").append(selfMessage)
+      $( "#btn-input" ).attr("placeholder", "Type your message here...").val("").focus().blur()
+    })
+
+    
   })
 }
-
-// Chat login
-
-$( "#btn-chat" ).click(function(event) {
-  event.preventDefault()
-  var selfMessage = '<li class="right clearfix"><span class="chat-img pull-right"><img src="http://api.adorable.io/avatars/50/'+user.username+'" alt="User Avatar" class="img-circle" /></span><div class="chat-body clearfix"><div class="header"><small class=" text-muted"><i class="fa fa-upload-o fa-fw"></i> </small><strong class="pull-right primary-font">'+user.username+'</strong></div><p>'+$( "#btn-input" ).val()+'</p></div></li>'
-  $("#chatHistory").append(selfMessage)
-  $( "#btn-input" ).attr("placeholder", "Type your message here...").val("").focus().blur()
-})

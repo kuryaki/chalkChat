@@ -25,6 +25,7 @@ router.post('/', function(req, res, next) {
       })
 
       res
+      .cookie('access_token', token, { expires: new Date(Date.now() + 900000), secure: true })
       .status(200)
       .send({
         token: token
