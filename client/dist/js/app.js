@@ -1,5 +1,6 @@
-var token = ''
+var user = { username: 'default' }
 
+// Auth Logic
 $( "#signIn" ).click(function(event) {
   event.preventDefault()
   var data = $('#authForm').serializeArray().reduce(function(obj, item) {
@@ -19,7 +20,8 @@ $( "#signIn" ).click(function(event) {
     if(response.statusCode !== 200){
       return alert(body.error)
     }
-    token = body.token
+    user.token = body.token
+    user.username = data.username
     $( "#auth" ).hide()
     $( "#chat" ).show()
   })
@@ -62,8 +64,18 @@ $( "#signUpConfirm" ).click(function(event) {
     if(response.statusCode !== 200){
       return alert(body.error)
     }
-    token = body.token
+    user.token = body.token
+    user.username = data.username
     $( "#auth" ).hide()
     $( "#chat" ).show()
   })
+})
+
+// Chat login
+
+$( "#btn-chat" ).click(function(event) {
+  event.preventDefault()
+  var selfMessage = '<li class="right clearfix"><span class="chat-img pull-right"><img src="http://api.adorable.io/avatars/50/'+user.username+'" alt="User Avatar" class="img-circle" /></span><div class="chat-body clearfix"><div class="header"><small class=" text-muted"><i class="fa fa-upload-o fa-fw"></i> </small><strong class="pull-right primary-font">'+user.username+'</strong></div><p>'+$( "#btn-input" ).val()+'</p></div></li>'
+  $("#chatHistory").append(selfMessage)
+  $( "#btn-input" ).attr("placeholder", "Type your message here...").val("").focus().blur()
 })

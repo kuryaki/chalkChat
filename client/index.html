@@ -89,6 +89,11 @@
                     <div class="panel-body">
                         <div class="list-group">
                             <a href="#" class="list-group-item">
+                                <i class="fa fa-comments fa-fw"></i> General
+                                <span class="pull-right text-muted small"><em>4 minutes ago</em>
+                                </span>
+                            </a>
+                            <a href="#" class="list-group-item">
                                 <i class="fa fa-comment fa-fw"></i> Private
                                 <span class="pull-right text-muted small"><em>4 minutes ago</em>
                                 </span>
@@ -111,7 +116,7 @@
                         <i class="fa fa-comments fa-fw"></i> Chat
                     </div>
                     <div class="panel-body">
-                        <ul class="chat">
+                        <ul class="chat" id="chatHistory">
                             <li class="left clearfix">
                                 <span class="chat-img pull-left">
                                     <img src="http://api.adorable.io/avatars/50/55C1E7" alt="User Avatar" class="img-circle" />
@@ -128,56 +133,11 @@
                                     </p>
                                 </div>
                             </li>
-                            <li class="right clearfix">
-                                <span class="chat-img pull-right">
-                                    <img src="http://api.adorable.io/avatars/50/FA6F57" alt="User Avatar" class="img-circle" />
-                                </span>
-                                <div class="chat-body clearfix">
-                                    <div class="header">
-                                        <small class=" text-muted">
-                                            <i class="fa fa-clock-o fa-fw"></i> 13 mins ago</small>
-                                        <strong class="pull-right primary-font">Bhaumik Patel</strong>
-                                    </div>
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
-                                    </p>
-                                </div>
-                            </li>
-                            <li class="left clearfix">
-                                <span class="chat-img pull-left">
-                                    <img src="http://api.adorable.io/avatars/50/55C1E7" alt="User Avatar" class="img-circle" />
-                                </span>
-                                <div class="chat-body clearfix">
-                                    <div class="header">
-                                        <strong class="primary-font">Jack Sparrow</strong>
-                                        <small class="pull-right text-muted">
-                                            <i class="fa fa-clock-o fa-fw"></i> 14 mins ago</small>
-                                    </div>
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
-                                    </p>
-                                </div>
-                            </li>
-                            <li class="right clearfix">
-                                <span class="chat-img pull-right">
-                                    <img src="http://api.adorable.io/avatars/50/FA6F57" alt="User Avatar" class="img-circle" />
-                                </span>
-                                <div class="chat-body clearfix">
-                                    <div class="header">
-                                        <small class=" text-muted">
-                                            <i class="fa fa-clock-o fa-fw"></i> 15 mins ago</small>
-                                        <strong class="pull-right primary-font">Bhaumik Patel</strong>
-                                    </div>
-                                    <p>
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur bibendum ornare dolor, quis ullamcorper ligula sodales.
-                                    </p>
-                                </div>
-                            </li>
                         </ul>
                     </div>
                     <div class="panel-footer">
                         <div class="input-group">
-                            <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." />
+                            <input id="btn-input" type="text" class="form-control input-sm" placeholder="Type your message here..." autofocus />
                             <span class="input-group-btn">
                                 <button class="btn btn-warning btn-sm" id="btn-chat">
                                     Send
