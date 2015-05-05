@@ -16,7 +16,7 @@ env.load()
 
 app.use(bodyParser.json())
 app.use(cors())
-app.use(express.static(__dirname + '/public'))
+app.use(express.static(__dirname + '/client'))
 app.use(jwt({ secret: process.env.JWT_SECRET }).unless({path: ['/login', '/register', '/status']}))
 
 if(process.env.NODE_ENV !== 'test'){

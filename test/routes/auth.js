@@ -1,7 +1,7 @@
 process.env.PORT = 4000
 process.env.NODE_ENV = 'test'
 
-var server = require('../../')
+var server = require('../../app')
   , supertest = require('supertest')
   , request = supertest(server)
   , expect = require('chai').expect

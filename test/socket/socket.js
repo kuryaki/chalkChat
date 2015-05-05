@@ -3,7 +3,7 @@ process.env.NODE_ENV = 'test'
 
 var io = require('socket.io-client')
   , socketURL = 'http://0.0.0.0:'+process.env.PORT
-  , server = require('../../')
+  , server = require('../../app')
   , supertest = require('supertest')
   , request = supertest(server)
   , expect = require('chai').expect
