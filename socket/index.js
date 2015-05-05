@@ -23,6 +23,8 @@ module.exports = function(http) {
   io.on('error', logger.error)
 
   io.on('connection', function (socket) {
+    socket.join('general')
+    // TODO redis add general to user channels
     socket.on('message', function(){
       console.log('message', arguments)
     })

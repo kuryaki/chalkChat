@@ -18,7 +18,7 @@ env.load()
 app.use(bodyParser.json())
 app.use(cors())
 app.use(express.static(__dirname + '/client'))
-app.use(jwt({ secret: process.env.JWT_SECRET }).unless({path: ['/login', '/register', '/status']}))
+app.use(jwt({ secret: process.env.JWT_SECRET }).unless({path: ['/login', '/register', '/status', '/socket.io']}))
 
 if(process.env.NODE_ENV !== 'test'){
   app.use(morgan('dev', { "stream": logger.stream }))

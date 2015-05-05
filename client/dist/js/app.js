@@ -20,10 +20,11 @@ $( "#signIn" ).click(function(event) {
     if(response.statusCode !== 200){
       return alert(body.error)
     }
+
     user.token = body.token
     user.username = data.username
-    $( "#auth" ).hide()
-    $( "#chat" ).show()
+    socketAuth(user)
+
   })
 })
 
@@ -64,12 +65,27 @@ $( "#signUpConfirm" ).click(function(event) {
     if(response.statusCode !== 200){
       return alert(body.error)
     }
+
     user.token = body.token
     user.username = data.username
-    $( "#auth" ).hide()
-    $( "#chat" ).show()
+    socketAuth()
+
   })
 })
+
+function socketAuth(){
+  $( "#auth" ).hide()
+  // TODO make a spinner
+
+  // Change this url for a proper one
+  var socket = io.connect(document.URL, {
+    'query': 'token=' + user.token
+  })
+
+  socket.on('connect', function(){
+    $( "#chat" ).show()
+  })
+}
 
 // Chat login
 
