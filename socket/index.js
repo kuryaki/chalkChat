@@ -23,13 +23,24 @@ module.exports = function(http) {
   io.on('error', logger.error)
 
   io.on('connection', function (socket) {
-    logger.info(socket.id)
-    socket.join('general')
     // TODO redis add general to user channels
-    socket.on('message', function(){
-      console.log('message', arguments)
+
+    socket.on('channel', function(channel){
+      socket.join(channel)
+      redis.sadd('chalk:channels:'+socket.decoded_token.username, channel, done)
+      socket.on(channel, function(message){
+        console.log('message', channel, message)
+        // TODO Add to last 20 messages on channel
+        socket.broadcast.to(channel).emit('chat', {from:socket.decoded_token.username, message: message})
+      })
     })
   })
 
   return io
+}
+
+function done(error){
+  if(error){
+    logger.error(error)
+  }
 }

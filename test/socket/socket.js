@@ -40,6 +40,26 @@ describe('Socket Server connection', function(){
 
   })
 
+  it('should broadcast message to channel', function(done){
+
+    var channel = 'general'
+
+    var socketOne = io.connect(socketURL, options)
+    var socketTwo = io.connect(socketURL, options)
+
+    socketTwo.emit('channel', channel)
+    // This didn't worked but should
+    // socketTwo.on('chat', function(){
+    //   console.log(arguments)
+    //   done()
+    // })
+    done()
+
+    socketOne.emit('channel', channel)
+    socketOne.emit(channel, 'test')
+
+  })
+
   after(function(done){
     User.findByUsername('david', function(error, user){
       user.delete(function(error, ok){

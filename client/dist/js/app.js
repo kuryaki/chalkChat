@@ -94,6 +94,7 @@ $( "#signOut" ).click(function(event) {
 })
 
 function socketAuth(){
+  var channel = 'general'
   $( "#auth" ).hide()
   // TODO make a spinner
 
@@ -113,9 +114,12 @@ function socketAuth(){
     $( "#chat" ).show()
 
     // Chat login
+    
+    socket.emit('channel', channel)
 
     $( "#btn-chat" ).click(function(event) {
       event.preventDefault()
+      var message = $( "#btn-input" ).val()
       var selfMessage = [
         '<li class="right clearfix">',
         ' <span class="chat-img pull-right">',
@@ -126,14 +130,36 @@ function socketAuth(){
         '     <small class=" text-muted"><i class="fa fa-upload-o fa-fw"></i> </small>',
         '     <strong class="pull-right primary-font">'+user.username+'</strong>',
         '   </div>',
-        '   <p>'+$( "#btn-input" ).val()+'</p>',
+        '   <p>'+message+'</p>',
         ' </div>',
         '</li>'
       ].join("\n");
       $("#chatHistory").append(selfMessage)
       $( "#btn-input" ).attr("placeholder", "Type your message here...").val("").focus().blur()
+
+      // TODO change emit for specific conversation
+      
+      socket.emit(channel, message)
+
     })
 
+    socket.on('chat', function(chat){
+      var otherMessage = [
+          '<li class="left clearfix">',
+          ' <span class="chat-img pull-left">',
+          '   <img src="http://api.adorable.io/avatars/50/'+chat.from+'" alt="User Avatar" class="img-circle" />',
+          ' </span>',
+          ' <div class="chat-body clearfix">',
+          '   <div class="header">',
+          '     <strong class="primary-font">'+chat.from+'</strong>',
+          '     <small class="pull-right text-muted"><i class="fa fa-upload-o fa-fw"></i> </small>',
+          '   </div>',
+          '   <p>'+chat.message+'</p>',
+          ' </div>',
+          '</li>'
+        ].join("\n");
+      $("#chatHistory").append(otherMessage)
+    })
     
   })
 }
