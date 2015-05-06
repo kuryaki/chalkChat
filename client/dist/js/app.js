@@ -165,7 +165,7 @@ function socketAuth(){
         $("#conversations").append(getChannel(chan))
       })
       $( "#conversations a" ).click(function(){
-        channel = $(this).text().trim().toLowerCase()
+        channel = $(this).text().trim()
         socket.emit('channel', channel)
         return false
       })
@@ -184,7 +184,7 @@ function socketAuth(){
   })
 
   $( "#newConversation" ).click(function(){
-    channel = $('#newConversationName').val()
+    channel = $('#newConversationName').val().split(':')[0]
     socket.emit('channel', channel)
   })
 
@@ -195,8 +195,7 @@ function socketAuth(){
 function getChannel(channel){
   return [
   '<a id="channel-'+channel+'" href="#" class="list-group-item">',
-  '  <i class="fa fa-comments fa-fw"></i> '+channel.charAt(0).toUpperCase() + channel.slice(1),
-  '  </span>',
+  '  <i class="fa fa-comments fa-fw"></i> '+channel,
   '</a>'
   ].join("\n")
 }
