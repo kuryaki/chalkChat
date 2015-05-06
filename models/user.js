@@ -74,9 +74,6 @@ User.findByUsername = function(username, next){
     if(user) {
       user.__proto__ = User.prototype
       
-      delete user.password
-      delete user.salt
-
       next(null, user)
     } else {
       next(null, null)

@@ -15,6 +15,7 @@ router.post('/', function(req, res, next) {
   User.findByUsername(req.body.username, function(error, user){
     if(error){ return next(error) }
     if(!user){ return res.status(401).send({error:'Not a registered user please Sign Up'}) }
+    console.log(req.body)
     if(user.validatePassword(req.body.password)){
       var token = jwt.sign(user, process.env.JWT_SECRET, {
         expiresInMinutes: 1440 // expires in 24 hours

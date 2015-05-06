@@ -99,7 +99,7 @@ function socketAuth(){
   // TODO make a spinner
 
   // Change this url for a proper one
-  var socket = io.connect(document.URL, {
+  socket = io.connect(document.URL, {
     'query': 'token=' + user.token
   })
 
@@ -131,11 +131,18 @@ function socketAuth(){
       $("#chatHistory").append(getSelfMessage(user.username, message))
       $( "#btn-input" ).attr("placeholder", "Type your message here...").val("").focus().blur()
       $('#chatHistoryContainer').scrollTop($('#chatHistoryContainer')[0].scrollHeight)
+      console.log('emit', channel, message)
       socket.emit(channel, message)
       return false
     }
 
+    socket.on('info', function(info){
+      console.log(info)
+    })
+
     socket.on('chat', function(chat){
+      console.log('chat', chat)
+      chat.channel = chat.channel.indexOf(':') > 0 ? chat.channel.split(':')[1] : chat.channel
       if (chat.channel === channel) {
         $("#chatHistory").append(getOtherMessage(chat.from, chat.message))
         $('#chatHistoryContainer').scrollTop($('#chatHistoryContainer')[0].scrollHeight)
@@ -193,11 +200,19 @@ function socketAuth(){
 }
 
 function getChannel(channel){
-  return [
-  '<a id="channel-'+channel+'" href="#" class="list-group-item">',
-  '  <i class="fa fa-comments fa-fw"></i> '+channel,
-  '</a>'
-  ].join("\n")
+  if(channel.split(':')[1]){
+    return [
+    '<a id="channel-'+channel.split(':')[0]+'" href="#" class="list-group-item">',
+    '  <i class="fa fa-comment fa-fw"></i> '+channel.split(':')[0],
+    '</a>'
+    ].join("\n")
+  } else {
+    return [
+    '<a id="channel-'+channel+'" href="#" class="list-group-item">',
+    '  <i class="fa fa-comments fa-fw"></i> '+channel,
+    '</a>'
+    ].join("\n")
+  }
 }
 
 function getSelfMessage(username, message){
