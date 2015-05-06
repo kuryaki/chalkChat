@@ -87,25 +87,30 @@
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
-                        <div class="list-group">
-                            <a href="#" class="list-group-item">
-                                <i class="fa fa-comments fa-fw"></i> General
-                                <span class="pull-right text-muted small"><em>4 minutes ago</em>
-                                </span>
-                            </a>
-                            <a href="#" class="list-group-item">
+                        <div class="list-group" id="conversations">
+                            <!-- Conversation list goes here !-->
+                            <!-- <a href="#" class="list-group-item">
                                 <i class="fa fa-comment fa-fw"></i> Private
-                                <span class="pull-right text-muted small"><em>4 minutes ago</em>
                                 </span>
-                            </a>
-                            <a href="#" class="list-group-item">
-                                <i class="fa fa-comments fa-fw"></i> Group
-                                <span class="pull-right text-muted small"><em>4 minutes ago</em>
-                                </span>
-                            </a>
-                            <a href="#" class="list-group-item text-center">
-                                <i class="fa fa-plus fa-fw"></i> New Conversation / Join Group
-                            </a>
+                            </a> -->
+                        </div>
+                        <a id="createConversation" href="#" class="list-group-item text-center">
+                            <i class="fa fa-plus fa-fw"></i> New Conversation / Join Group
+                        </a>
+                        <div class="modal fade" id="newConversationModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                          <div class="modal-dialog">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">Name a Contact / Group</h4>
+                              </div>
+                              <div class="modal-body">
+                                <input id="newConversationName" class="form-control" placeholder="Contact or Group Name" name="conversationName" type="text" value="" autocomplete="off">
+                              </div>
+                              <div class="modal-footer">
+                                <button id="newConversation" type="button" class="btn btn-default" data-dismiss="modal">Ok</button>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                     </div>
                 </div>

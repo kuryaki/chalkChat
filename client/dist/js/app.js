@@ -136,11 +136,17 @@ function socketAuth(){
     }
 
     socket.on('chat', function(chat){
-      $("#chatHistory").append(getOtherMessage(chat.from, chat.message))
-      $('#chatHistoryContainer').scrollTop($('#chatHistoryContainer')[0].scrollHeight)
+      if (chat.channel === channel) {
+        $("#chatHistory").append(getOtherMessage(chat.from, chat.message))
+        $('#chatHistoryContainer').scrollTop($('#chatHistoryContainer')[0].scrollHeight)
+      } else {
+        //$( "#channel_"+channel ).css("font-weight","Bold")
+        console.log('received message on non active window')
+      }
     })
 
     socket.on('history', function(history){
+      $("#chatHistory").empty()
       history.forEach(function(chat){
         var username = chat.split(':')[0]
         var message = chat.split(':')[1]
@@ -152,8 +158,47 @@ function socketAuth(){
       })
       $('#chatHistoryContainer').scrollTop($('#chatHistoryContainer')[0].scrollHeight)
     })
+
+    socket.on('channels', function(channels){
+      $("#conversations").empty()
+      channels.reverse().forEach(function(chan){
+        $("#conversations").append(getChannel(chan))
+      })
+      $( "#conversations a" ).click(function(){
+        channel = $(this).text().trim().toLowerCase()
+        socket.emit('channel', channel)
+        return false
+      })
+    })
     
   })
+
+  $( "#createConversation" ).click(function(){
+    $("#newConversationModal").modal('show')
+    return false
+  })
+
+  $("channel-general").click(function(){
+    console.log($(this))
+    return false
+  })
+
+  $( "#newConversation" ).click(function(){
+    channel = $('#newConversationName').val()
+    socket.emit('channel', channel)
+  })
+
+
+
+}
+
+function getChannel(channel){
+  return [
+  '<a id="channel-'+channel+'" href="#" class="list-group-item">',
+  '  <i class="fa fa-comments fa-fw"></i> '+channel.charAt(0).toUpperCase() + channel.slice(1),
+  '  </span>',
+  '</a>'
+  ].join("\n")
 }
 
 function getSelfMessage(username, message){
