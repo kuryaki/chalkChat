@@ -28,9 +28,12 @@ module.exports = function(http) {
     socket.on('channel', function(channel){
       socket.join(channel)
       redis.sadd('chalk:channels:'+socket.decoded_token.username, channel, done)
+      redis.lrange('chalk:channels:'+channel+':history', 0, 9, function(error, history){
+        socket.emit('history', history)
+      })
       socket.on(channel, function(message){
-        console.log('message', channel, message)
-        // TODO Add to last 20 messages on channel
+        redis.rpush('chalk:channels:'+channel+':history', socket.decoded_token.username+':'+message)
+        redis.ltrim('chalk:channels:'+channel+':history', 0, 99)
         socket.broadcast.to(channel).emit('chat', {from:socket.decoded_token.username, message: message})
       })
     })

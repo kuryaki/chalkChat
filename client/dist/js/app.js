@@ -117,49 +117,75 @@ function socketAuth(){
     
     socket.emit('channel', channel)
 
-    $( "#btn-chat" ).click(function(event) {
-      event.preventDefault()
+    $('#btn-input').keypress(function (e) {
+      if (e.which == 13) {
+        newMessage()
+        return false
+      }
+    });
+
+    $( "#btn-chat" ).click(newMessage)
+
+    function newMessage() {
       var message = $( "#btn-input" ).val()
-      var selfMessage = [
+      $("#chatHistory").append(getSelfMessage(user.username, message))
+      $( "#btn-input" ).attr("placeholder", "Type your message here...").val("").focus().blur()
+      $('#chatHistoryContainer').scrollTop($('#chatHistoryContainer')[0].scrollHeight)
+      socket.emit(channel, message)
+      return false
+    }
+
+    socket.on('chat', function(chat){
+      $("#chatHistory").append(getOtherMessage(chat.from, chat.message))
+      $('#chatHistoryContainer').scrollTop($('#chatHistoryContainer')[0].scrollHeight)
+    })
+
+    socket.on('history', function(history){
+      history.forEach(function(chat){
+        var username = chat.split(':')[0]
+        var message = chat.split(':')[1]
+        if (user.username === username) {
+          $("#chatHistory").append(getSelfMessage(username, message))
+        } else {
+          $("#chatHistory").append(getOtherMessage(username, message))
+        }
+      })
+      $('#chatHistoryContainer').scrollTop($('#chatHistoryContainer')[0].scrollHeight)
+    })
+    
+  })
+}
+
+function getSelfMessage(username, message){
+  return [
         '<li class="right clearfix">',
         ' <span class="chat-img pull-right">',
-        '   <img src="http://api.adorable.io/avatars/50/'+user.username+'" alt="User Avatar" class="img-circle" />',
+        '   <img src="http://api.adorable.io/avatars/50/'+username+'" alt="User Avatar" class="img-circle" />',
         ' </span>',
         ' <div class="chat-body clearfix">',
         '   <div class="header">',
         '     <small class=" text-muted"><i class="fa fa-upload-o fa-fw"></i> </small>',
-        '     <strong class="pull-right primary-font">'+user.username+'</strong>',
+        '     <strong class="pull-right primary-font">'+username+'</strong>',
         '   </div>',
-        '   <p>'+message+'</p>',
+        '   <p class="pull-right">'+message+'</p>',
         ' </div>',
         '</li>'
-      ].join("\n");
-      $("#chatHistory").append(selfMessage)
-      $( "#btn-input" ).attr("placeholder", "Type your message here...").val("").focus().blur()
+      ].join("\n")
+}
 
-      // TODO change emit for specific conversation
-      
-      socket.emit(channel, message)
-
-    })
-
-    socket.on('chat', function(chat){
-      var otherMessage = [
+function getOtherMessage(username, message){
+  return [
           '<li class="left clearfix">',
           ' <span class="chat-img pull-left">',
-          '   <img src="http://api.adorable.io/avatars/50/'+chat.from+'" alt="User Avatar" class="img-circle" />',
+          '   <img src="http://api.adorable.io/avatars/50/'+username+'" alt="User Avatar" class="img-circle" />',
           ' </span>',
           ' <div class="chat-body clearfix">',
           '   <div class="header">',
-          '     <strong class="primary-font">'+chat.from+'</strong>',
+          '     <strong class="primary-font">'+username+'</strong>',
           '     <small class="pull-right text-muted"><i class="fa fa-upload-o fa-fw"></i> </small>',
           '   </div>',
-          '   <p>'+chat.message+'</p>',
+          '   <p>'+message+'</p>',
           ' </div>',
           '</li>'
-        ].join("\n");
-      $("#chatHistory").append(otherMessage)
-    })
-    
-  })
+        ].join("\n")
 }
