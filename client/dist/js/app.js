@@ -7,6 +7,40 @@ $(document).ready(function() {
   }
 })
 
+function selfMessageHeader(username){
+
+  return [
+      '<li class="right clearfix">',
+      ' <span class="chat-img pull-right">',
+      '   <img src="http://api.adorable.io/avatars/50/'+username+'" alt="User Avatar" class="img-circle" />',
+      ' </span>',
+      ' <div class="chat-body clearfix">',
+      '   <div class="header">',
+      '     <small class=" text-muted"><i class="fa fa-upload-o fa-fw"></i> </small>',
+      '     <strong class="pull-right primary-font">'+username+'</strong>',
+      '   </div>'
+    ]
+}
+
+function otherMessageHeader(username){
+  return [
+      '<li class="left clearfix">',
+      ' <span class="chat-img pull-left">',
+      '   <img src="http://api.adorable.io/avatars/50/'+username+'" alt="User Avatar" class="img-circle" />',
+      ' </span>',
+      ' <div class="chat-body clearfix">',
+      '   <div class="header">',
+      '     <strong class="primary-font">'+username+'</strong>',
+      '     <small class="pull-right text-muted"><i class="fa fa-upload-o fa-fw"></i> </small>',
+      '   </div>'
+  ]
+}
+
+var footer = [
+      ' </div>',
+      '</li>'
+]
+
 // Auth Logic
 $( "#signIn" ).click(function(event) {
   event.preventDefault()
@@ -129,6 +163,7 @@ function socketAuth(){
     function newMessage() {
       var message = $( "#btn-input" ).val()
       $("#chatHistory").append(getSelfMessage(user.username, message))
+      addGliphy(user.username, message, true)
       $( "#btn-input" ).attr("placeholder", "Type your message here...").val("").focus().blur()
       $('#chatHistoryContainer').scrollTop($('#chatHistoryContainer')[0].scrollHeight)
       console.log('emit', channel, message)
@@ -141,10 +176,10 @@ function socketAuth(){
     })
 
     socket.on('chat', function(chat){
-      console.log('chat', chat)
       chat.channel = chat.channel.indexOf(':') > 0 ? chat.channel.split(':')[1] : chat.channel
       if (chat.channel === channel) {
         $("#chatHistory").append(getOtherMessage(chat.from, chat.message))
+        addGliphy(chat.from, chat.message, false)
         $('#chatHistoryContainer').scrollTop($('#chatHistoryContainer')[0].scrollHeight)
       } else {
         //$( "#channel_"+channel ).css("font-weight","Bold")
@@ -159,8 +194,10 @@ function socketAuth(){
         var message = chat.split(':')[1]
         if (user.username === username) {
           $("#chatHistory").append(getSelfMessage(username, message))
+          addGliphy(username, message, true)
         } else {
           $("#chatHistory").append(getOtherMessage(username, message))
+          addGliphy(username, message, false)
         }
       })
       $('#chatHistoryContainer').scrollTop($('#chatHistoryContainer')[0].scrollHeight)
@@ -215,36 +252,29 @@ function getChannel(channel){
   }
 }
 
+function addGliphy(username, message, self){
+  if(message.match(/^\/gliphy/g)){
+    request('http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag='+message.replace(/^\/gliphy/g, '').trim(),function (error, response, body) {
+      if (!error && response.statusCode == 200) {
+        var result = JSON.parse(body)
+        var element = []
+        console.log('self', self)
+        if(self){
+          element = selfMessageHeader(username)
+        } else {
+          element = otherMessageHeader(username)
+        }
+        var url = result.data.image_url
+        $("#chatHistory").append(element.concat(['   <img src="'+url+'" style="margin-top: 35px;">']).concat(footer).join("\n"))
+      }
+    })
+  }
+}
+
 function getSelfMessage(username, message){
-  return [
-        '<li class="right clearfix">',
-        ' <span class="chat-img pull-right">',
-        '   <img src="http://api.adorable.io/avatars/50/'+username+'" alt="User Avatar" class="img-circle" />',
-        ' </span>',
-        ' <div class="chat-body clearfix">',
-        '   <div class="header">',
-        '     <small class=" text-muted"><i class="fa fa-upload-o fa-fw"></i> </small>',
-        '     <strong class="pull-right primary-font">'+username+'</strong>',
-        '   </div>',
-        '   <p class="pull-right">'+message+'</p>',
-        ' </div>',
-        '</li>'
-      ].join("\n")
+  return selfMessageHeader(username).concat(['   <p class="pull-right">'+message+'</p>']).concat(footer).join("\n")
 }
 
 function getOtherMessage(username, message){
-  return [
-          '<li class="left clearfix">',
-          ' <span class="chat-img pull-left">',
-          '   <img src="http://api.adorable.io/avatars/50/'+username+'" alt="User Avatar" class="img-circle" />',
-          ' </span>',
-          ' <div class="chat-body clearfix">',
-          '   <div class="header">',
-          '     <strong class="primary-font">'+username+'</strong>',
-          '     <small class="pull-right text-muted"><i class="fa fa-upload-o fa-fw"></i> </small>',
-          '   </div>',
-          '   <p>'+message+'</p>',
-          ' </div>',
-          '</li>'
-        ].join("\n")
+  return otherMessageHeader(username).concat(['   <p>'+message+'</p>']).concat(footer).join("\n")
 }
